@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<flow name="postInterventionFlow" doc:id="372bf1b6-de5c-4e51-9f34-77c95c6b2c33">
 		<logger level="INFO" doc:name="Logger" doc:id="6512e24c-7c14-48d2-8341-842b231f8d72" message="Recieved Interventions CorrelationId is  #[correlationId]" />
 		<set-variable value="#[payload]" doc:name="input_payload" doc:id="ed49d0b0-6665-431d-a318-587f006bbbb2" variableName="input_payload" />
-		<logger level="INFO" doc:name="Logger" doc:id="167d3b14-2bdb-4184-843a-75e7ca33eab0" message="dftyu"/>
+		<logger level="INFO" doc:name="Logger" doc:id="167d3b14-2bdb-4184-843a-75e7ca33eab0" message="dftyugxhjkl"/>
 		<http:request doc:name="Request" doc:id="2bc402d3-50bb-4386-b6ab-0221c83c620e" config-ref="mu_papi_intervention" method="POST" path="/intervention" requestStreamingMode="ALWAYS">
 			<http:headers><![CDATA[#[output application/java
 ---
