@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postDevisFlow" doc:id="a42b8497-326d-431e-a300-9b000260f707" >
+		<logger level="INFO" doc:name="Logger" doc:id="7b991deb-6f8d-4669-8e5d-ede5538d0b97" message="Recieved Devis Records CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="5c8f54e8-1b5e-4554-a497-146eea8e71cc" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="f50c4fb0-12c5-45b1-8c02-3e26c60b2045" config-ref="mu_papi_transaction" method="POST" path="/devis" requestStreamingMode="ALWAYS">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-Devis"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

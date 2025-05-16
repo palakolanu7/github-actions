@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postEngagementFlow" doc:id="93ebba10-b27e-45b6-9690-80840b34ef2f" >
+		<logger level="INFO" doc:name="Logger" doc:id="d6bad25a-3b0d-413a-b2ce-897fff75e12c" message="Recieved Engagement Records CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="0b80c1cc-5fa6-4fb9-b222-4c512f7c32fa" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="cfb6a6d5-4920-40ff-9ae2-00ca74659ec8" config-ref="mu_papi_transaction" method="POST" path="/engagement" requestStreamingMode="ALWAYS">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-Engagement"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

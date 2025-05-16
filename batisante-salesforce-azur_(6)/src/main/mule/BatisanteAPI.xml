@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <http:listener-config name="BatisanteAPI-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" readTimeout="120000" />
+    </http:listener-config>
+    <apikit:config name="BatisanteAPI-config" api="resource::093b2654-3199-42aa-8179-d74fce0ac54c:batisante:10.0.4:raml:zip:BatisanteAPI.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="BatisanteAPI-main">
+        <http:listener config-ref="BatisanteAPI-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="BatisanteAPI-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Error",
+	errormessage: "Bad request"
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Error",
+	errormessage: "Resource not found"
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Error",
+	errormessage: "Method not allowed"
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Error",
+	errormessage: "Not acceptable"
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Error",
+	errormessage: "Unsupported media type"
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: "Error",
+	errormessage: "Not Implemented"
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="23ffe381-9a7b-4c36-8cff-8ef8730f6a39" type="ANY">
+                <logger level="ERROR" doc:name="Logger" doc:id="50dfac8a-3dbd-428e-8e6d-f340df911754" message="Correlation Id #[correlationId], Failed Payload #[vars.input_payload]" />
+                <ee:transform doc:name="Transform Message" doc:id="bb20042a-d624-4314-80ea-1f5677c1e9b2">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  status: "Error",
+  errormessage: "The server has encountered an unexpected error. We apologize for the inconvenience. Please try again later."
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="BatisanteAPI-console">
+        <http:listener config-ref="BatisanteAPI-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="BatisanteAPI-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\opestatusupdate:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postOpestatusupdateFlow" doc:id="f514a68d-222e-484b-aab4-c3446e760ae2" name="postOpestatusupdateFlow" />
+    </flow>
+    <flow name="post:\bdc:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postBdcFlow" doc:id="5be4684c-1bde-47de-a54e-c4c435a63e09" name="postBdcFlow" />
+    </flow>
+    <flow name="post:\client:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postAccountFlow" doc:id="4f47caea-a117-4caf-aaec-538a47bc8f90" name="postAccountFlow" />
+    </flow>
+    <flow name="post:\contact:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postContactFlow" doc:id="c1c2c89f-db31-4172-89ee-58a34bce8592" name="postContactFlow" />
+    </flow>
+    <flow name="post:\contract:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postContractFlow" doc:id="c49dcd9b-6638-45e0-8220-8e485df2916a" name="postContractFlow" />
+    </flow>
+    <flow name="post:\devis:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postDevisFlow" doc:id="ca4878cf-aae5-4985-82f1-ca0d943a39f4" name="postDevisFlow" />
+    </flow>
+    <flow name="post:\engagement:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postEngagementFlow" doc:id="6d5438b0-37ec-4b30-bc8c-45f85c1eafb7" name="postEngagementFlow" />
+    </flow>
+    <flow name="post:\equipment:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postEquipmentFlow" doc:id="09208aeb-ce93-4925-821f-fe9ae7e99620" name="postEquipmentFlow" />
+    </flow>
+    <flow name="post:\intervention:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postInterventionFlow" doc:id="ae109f69-075e-45be-bfa4-24851ed9d995" name="postInterventionFlow" />
+    </flow>
+    <flow name="post:\location\lieu:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postLocationLieuFlow" doc:id="012c2aa4-f3f2-4468-b24b-4be50478aef1" name="postLocationLieuFlow" />
+    </flow>
+    <flow name="post:\location\site:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postLocationSiteFlow" doc:id="200bc852-582b-4927-b89a-c16f74b85cc7" name="postLocationSiteFlow" />
+    </flow>
+    <flow name="put:\updatestatus:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="postStatusUpdateFlow" doc:id="402dea05-d3f3-42c2-acb0-037319079f2a" name="postStatusUpdateFlow" />
+    </flow>
+    <flow name="post:\AffectedEquipments:application\json:BatisanteAPI-config">
+        <flow-ref doc:name="Flow Reference" doc:id="36b4af72-949c-4925-8754-7c167bee3184" name="postAffectedEquipments" />
+    </flow>
+</mule>

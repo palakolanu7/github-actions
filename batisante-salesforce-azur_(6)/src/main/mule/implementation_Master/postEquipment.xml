@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postEquipmentFlow" doc:id="63cd3a19-805d-459f-afdd-79a3c829605f" >
+		<logger level="INFO" doc:name="Logger" doc:id="cd57ce75-1369-4de7-9574-e15033232b64" message="Recieved Equipments CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="42f534ff-cfa6-4562-9e30-d278c1bf0b86" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="260adcdf-b815-486c-9fcf-0d7d926ee3ee" config-ref="mu_papi_master" method="POST" path="/asset">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-Equipment"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

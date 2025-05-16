@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postBdcFlow" doc:id="f64287cd-5e71-4e6e-bdde-363c70151f25" >
+		<logger level="INFO" doc:name="Logger" doc:id="94327f9b-7ec7-4432-95c3-3de76c7bcbf4" message="Recieved BDC records CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="af28d2f2-1892-4189-9973-5ed0118bbb68" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="926f49c9-870d-4b9e-9fa1-183b8be96c11" config-ref="mu_papi_transaction" method="POST" path="/bdc" requestStreamingMode="ALWAYS">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-Bdc"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

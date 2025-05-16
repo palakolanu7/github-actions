@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postContactFlow" doc:id="08fbc386-d38f-40b4-ae12-e0a3a4ff2f87" >
+		<logger level="INFO" doc:name="Logger" doc:id="436b3dfb-ea62-40d3-b4ac-8601baaff4cc" message="Recieved Contacts CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="8797373a-e54c-4609-886e-e5e631555a41" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="ca33a594-98d4-4ab5-a765-fbf023f9089c" config-ref="mu_papi_master" method="POST" path="/contact">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-Contact"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

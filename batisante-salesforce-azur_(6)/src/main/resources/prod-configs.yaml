@@ -1,0 +1,17 @@
+mu_papi_master:
+  host: "mule-worker-internal-mu-papi-master.de-c1.eu1.cloudhub.io"
+  client_id: "![8AjA9kNfU3ECeJ8Vcd+b+EnO+bn2LhlK09w3tT0tqHTkWXvLuIHjfA==]"
+  client_secret: "![MSp+NFRp+AuB+NRS5vHkXo+d2vSnTvFap9g29hmVme/jiixPaQBJ4Q==]"
+
+mu_papi_transaction:
+  host: "mule-worker-internal-mu-papi-transaction.de-c1.eu1.cloudhub.io"
+  client_id: "![/XoAkMv+dbZmq7b9zemQnneUyKLsclrZMWOsUERjTbu1B3v5aqigyQ==]"
+  client_secret: "![yP87sHUquZpM8+U9iJ7kMdlEOxOVJChbH4XGMfZuxABBWnpWsnyTpA==]"
+  
+mu_papi_intervention:
+  host: "mule-worker-internal-mu-papi-intervention.de-c1.eu1.cloudhub.io"
+  client_id: "![XxWP1fajHb3Y9pai2Do3VQNOK9QIr1BRV4jo+OHEpsW9dRmHUDXW/g==]"
+  client_secret: "![63t8QqcCGIdtrjc7JXmvWxk+/6MIdH95//vtEoRYr02AQbv1/15pFQ==]"
+  
+api:
+  Id: "2161495"

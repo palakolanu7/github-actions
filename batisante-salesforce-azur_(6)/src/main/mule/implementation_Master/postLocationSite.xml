@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postLocationSiteFlow" doc:id="9332d112-1a70-4908-a3dd-645a03bf43ba" >
+		<logger level="INFO" doc:name="Logger" doc:id="ec05bffe-d1ad-4b63-ac05-102ccdb63b41" message="Recieved LocationSite Records CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="52fe278f-04df-46d6-b6d7-3a13ca59acc9" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="265cf4e1-ccb7-481f-ae7a-a11172bc0613" config-ref="mu_papi_master" method="POST" path="/locationsite">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-LocationSite"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

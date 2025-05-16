@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="733933be-6f24-444e-b667-0a6b5315afbe" file="${env}-configs.yaml" />
+	<global-property doc:name="Global Property" doc:id="eb2a0e29-3dea-4169-aee5-c00c6953746b" name="env" value="dev" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="2b2f4480-b6a8-45db-89c9-3b7e0bd8004e" file="${env}-configs.yaml" key="mulesoft" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<api-gateway:autodiscovery apiId="${api.Id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="a8069c75-9a54-4392-b9cc-b5c6840796cc" flowRef="BatisanteAPI-main" />
+	<http:request-config name="mu_papi_master" doc:name="HTTP Request configuration" doc:id="cb9099f5-cc11-4083-9b29-fb7ac386ea1d" basePath="/api/process" responseTimeout="120000">
+		<http:request-connection host="${mu_papi_master.host}" connectionIdleTimeout="120000" port="${http.private.port}"/>
+		<http:default-headers >
+			<http:default-header key="client_id" value="${secure::mu_papi_master.client_id}" />
+			<http:default-header key="client_secret" value="${secure::mu_papi_master.client_secret}" />
+		</http:default-headers>
+	</http:request-config>
+	<http:request-config name="mu_papi_transaction" doc:name="HTTP Request configuration" doc:id="30ea954a-1457-4416-87f4-9467a827e15b" basePath="/api/process" responseTimeout="120000">
+		<http:request-connection connectionIdleTimeout="120000" host="${mu_papi_transaction.host}" port="${http.private.port}"/>
+		<http:default-headers >
+			<http:default-header key="client_id" value="${secure::mu_papi_transaction.client_id}" />
+			<http:default-header key="client_secret" value="${secure::mu_papi_transaction.client_secret}" />
+		</http:default-headers>
+	</http:request-config>
+	<http:request-config name="mu_papi_intervention" doc:name="HTTP Request configuration" doc:id="4f54fda5-e3a3-4dc1-9722-34401f7c6b83" basePath="/api/process" responseTimeout="120000" >
+		<http:request-connection connectionIdleTimeout="120000" host="${mu_papi_intervention.host}" port="${http.private.port}"/>
+		<http:default-headers >
+			<http:default-header key="client_id" value="${secure::mu_papi_intervention.client_id}" />
+			<http:default-header key="client_secret" value="${secure::mu_papi_intervention.client_secret}" />
+		</http:default-headers>
+	</http:request-config>
+</mule>

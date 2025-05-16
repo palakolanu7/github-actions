@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="postOpestatusupdateFlow" doc:id="756552f4-18d2-4477-98c2-f61777d6b5dc">
+		<logger level="INFO" doc:name="Logger" doc:id="2a02c055-542c-4734-af4d-52aaea75cd8c" message="Recieved Operation Records CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="890c7fad-ee68-4ccb-82ba-c83aa307f69d" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="1ba36b65-e74f-41d1-b4e9-ba932919f4f3" config-ref="mu_papi_intervention" method="PUT" path="/opestatusupdate">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-OpeStatus"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

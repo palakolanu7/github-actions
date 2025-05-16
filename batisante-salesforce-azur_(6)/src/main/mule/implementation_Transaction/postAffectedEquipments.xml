@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	
+		<flow name="postAffectedEquipments" doc:id="c2d8e0e6-c4ee-4173-a2d6-a32d7dbf3140" >
+		<logger level="INFO" doc:name="Logger" doc:id="43d9333a-04b7-4fb5-bfa7-c2162b597a2a" message="Recieved BDC records CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="68b1ff69-5004-40d9-a491-b887e10db7f5" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="ec641956-3b97-441b-b28c-3b708fc2aee7" config-ref="mu_papi_transaction" method="POST" path="/AffectedEquipments" requestStreamingMode="ALWAYS">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-AffectedEquipments"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+	
+	
+	</mule>

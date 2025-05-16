@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postContractFlow" doc:id="86492ea9-3ddf-48f2-816c-8aa529b83813" >
+		<logger level="INFO" doc:name="Logger" doc:id="4aa454d8-54f0-4629-bd7e-13aa28a7b1e4" message="Recieved Contracts CorrelationId is  #[correlationId]" />
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="2a35d853-5fc5-4469-b172-1d88c8f0b4d0" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="41a8d82d-01dd-47dd-820e-72cece996d3a" config-ref="mu_papi_transaction" method="POST" path="/contract" requestStreamingMode="ALWAYS">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-Contract"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>

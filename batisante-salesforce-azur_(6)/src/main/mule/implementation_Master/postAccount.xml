@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="postAccountFlow" doc:id="b47d061c-94d7-4659-bf01-57b7dce464c9" >
+		<logger level="INFO" doc:name="Logger" doc:id="36a66924-5382-4fee-b4c5-806e04931cd3" message="Recieved Accounts CorrelationId is  #[correlationId]"/>
+		<set-variable value="#[payload]" doc:name="input_payload" doc:id="89543e26-7434-4993-a8bb-cc61e51744ba" variableName="input_payload" />
+		<http:request doc:name="Request" doc:id="a0e4caed-bcd2-491a-86ef-9faf6b00ca24" config-ref="mu_papi_master" method="POST" path="/account">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"X-CORRELATION-ID" : correlationId ++ "-Account"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+</mule>
